@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-card elevation="0" class="mt-4">
+  <div class="fill-height">
+    <v-card elevation="0" class="mt-4" v-if="detailPembayaran">
       <v-card-text class="d-flex justify-center align-center flex-column">
         <div @click="imageModal = true" style="width: auto; height: auto; border-radius: 10px; overflow: hidden;">
           <v-img :src="detailPembayaran[0].foto_bukti_pembayaran" width="300" height="300">
@@ -19,13 +19,16 @@
           <span class="font-weight-bold mt-n1">{{ tanggal }}</span>
         </div>
       </v-card-text>
-      <v-card-actions class="d-flex justify-center">
+      <v-card-actions v-if="id == detailPembayaran[0].id_user" class="d-flex justify-center">
         <v-btn color="blue-grey darken-2" class="white--text">
           <v-icon color="white">mdi-delete</v-icon>
           hapus
         </v-btn>
       </v-card-actions>
     </v-card>
+    <div v-else class="fill-height d-flex justify-center align-center pb-6" style="width: 100%">
+      <img width="90" src="../assets/loading.gif" alt="">
+    </div>
     <div v-if="imageModal" @click.self="imageModal = false" class="containerModal">
       <div class="imageContainer">
         <PinchScrollZoom width="350" height="400" :scale="1">
@@ -39,7 +42,7 @@
 </template>
 
 <script>
-import { getDatesFromMilisecond, formatNumber } from '../plugins/utils'
+import { getDatesFromMilisecond, formatNumber, getDocWithId } from '../plugins/utils'
 import PinchScrollZoom from '@coddicat/vue-pinch-scroll-zoom'
 
 export default {
@@ -48,22 +51,39 @@ export default {
   },
   data() {
     return {
+      id: localStorage.getItem('id'),
       imageModal: false,
       detailPembayaran: null
     }
   },
   computed: {
-    harga(){
+    harga() {
       return formatNumber(this.detailPembayaran[0].nominal);
     },
     tanggal() {
       return getDatesFromMilisecond(this.detailPembayaran[0].tanggal_pembayaran)
     }
   },
+  methods: {
+    async getDetail() {
+      const getDetail = await getDocWithId('pembayaran_listrik', this.$route.params.id);
+      const getUser = await getDocWithId('user', this.id);
+      this.detailPembayaran = [{ username: getUser.name, ...getDetail }];
+    },
+    get() {
+      if (!this.$route.params.directFromDatabase) {
+        this.detailPembayaran = this.$store.state.pembayaranListrik.filter(doc => {
+          return doc.id == this.$route.params.id
+        })
+        return;
+      }
+
+      this.getDetail();
+      return;
+    }
+  },
   created() {
-    this.detailPembayaran = this.$store.state.pembayaranListrik.filter(doc => {
-      return doc.id == this.$route.params.id
-    })
+    this.get();
   }
 }
 </script>
@@ -72,9 +92,11 @@ export default {
 .containerModal::-webkit-scrollbar {
   display: none;
 }
+
 .imageContainer::-webkit-scrollbar {
   display: none;
 }
+
 .containerModal {
   position: fixed;
   top: 0px;

@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     detailPembayaran(id) {
-      this.$router.push({ name: 'Detail Pembayaran', params: { id: id } })
+      this.$router.push({ name: 'Detail Pembayaran', params: { id: id, directFromDatabase: false } })
     },
     onIntersect(entries) {
       if (entries[0].isIntersecting) {

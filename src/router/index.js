@@ -15,7 +15,7 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/detail-pembayaran/:id',
+    path: '/detail-pembayaran/:id/:directFromDatabase',
     name: 'Detail Pembayaran',
     component: () => import('../views/DetailPembayaran.vue')
   },

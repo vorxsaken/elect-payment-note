@@ -1,7 +1,7 @@
 <template>
   <v-container class="fill-height">
     <v-row v-if="history.length != 0" style="height: 89vh;" class="overflow-y-auto">
-      <v-col v-for="item in history" :key="item.id" cols="12" sm="12" md="6" lg="3">
+      <v-col v-for="item in history" :key="item.id" cols="12" sm="12" md="6" lg="3" @click="detailPembayaran(item.id)">
         <PaymentListVue :tanggal="item.tanggal_pembayaran" :username="item.username" :src="item.foto_bukti_pembayaran" />
       </v-col>
     </v-row>
@@ -16,6 +16,7 @@ import PaymentListVue from '../components/PaymentList.vue';
 import { getDocCon, getDocWithId } from '../plugins/utils'
 
 export default {
+  name: 'History',
   components: {
     PaymentListVue
   },
@@ -25,6 +26,9 @@ export default {
     }
   },
   methods: {
+    detailPembayaran(id) {
+      this.$router.push({name: 'Detail Pembayaran', params: { id: id, directFromDatabase: true }})
+    },
     async getHistory() {
       const getHistory = await getDocCon('pembayaran_listrik', 'id_user', localStorage.getItem('id'));
       const user = await getDocWithId('user', localStorage.getItem('id'));

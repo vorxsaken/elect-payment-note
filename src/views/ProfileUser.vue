@@ -35,7 +35,7 @@
                     <v-list-item-title class="font-weight-bold grey--text text--darken-2">Tambah Anggota</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item>
+            <v-list-item @click="logout">
                 <v-list-item-icon>
                     <v-icon>mdi-logout</v-icon>
                 </v-list-item-icon>
@@ -50,7 +50,12 @@
 
 <script>
 export default {
-
+    methods: {
+        logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+    }
 }
 </script>
 

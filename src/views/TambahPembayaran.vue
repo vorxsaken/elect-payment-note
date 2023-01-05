@@ -11,16 +11,7 @@
         </v-card-actions>
         
         <!-- dialog -->
-        <v-dialog v-model="messageDialog" overlay-opacity="0.3">
-            <v-card elevation="0">
-                <v-card-text class="d-flex justify-center align-center flex-column pt-6 pb-8">
-                    <v-icon size="90" color="blue-grey darken-2">{{ messageIcon }}</v-icon>
-                    <span class="text-roboto mt-2 blue-grey--text text--darken-2 font-weight-bold" style="font-size: 0.9rem">
-                        {{ message }}
-                    </span>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
+        <DialogMessage :dialog="messageDialog" :icon="messageIcon" :text="message" @changeValue="e => messageDialog = e"></DialogMessage>
     </v-card>
 </template>
 
@@ -29,11 +20,13 @@ import PickImage from '../components/PickImage.vue';
 import TextInputVue from '../components/TextInput.vue';
 import { addData, setData, uploadAFile} from '../plugins/utils'
 import Compressor from 'compressorjs'
+import DialogMessage from '../components/DialogMessage.vue';
 
 export default {
     components: {
         PickImage,
-        TextInputVue
+        TextInputVue,
+        DialogMessage
     },
     data() {
         return {

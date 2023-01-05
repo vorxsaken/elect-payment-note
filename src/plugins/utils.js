@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, getDoc, getFirestore, query, where, addDoc, setDoc, orderBy, limit, startAfter, onSnapshot } from 'firebase/firestore'
+import { collection, doc, getDocs, getDoc, getFirestore, query, where, addDoc, setDoc, orderBy, limit, startAfter, onSnapshot, updateDoc } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import app from '../plugins/firebase';
 import store from '../store/index';
@@ -68,6 +68,17 @@ const setData = (collectionName, data, id) => {
     })
 }
 
+// update databases documents
+const updateData = (collectionName, id, data) => {
+    return new Promise((resolve, reject) => {
+        updateDoc(doc(db, collectionName, id), data).then((e) => {
+            resolve(e);
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 // upload file or blob
 const uploadAFile = (file, folder) => {
     return new Promise((resolve, reject) => {
@@ -119,5 +130,6 @@ export {
     getStartAfterDescData,
     getDatesFromMilisecond,
     formatNumber,
-    getRealtimeUpdatePembayaran
+    getRealtimeUpdatePembayaran,
+    updateData
 };

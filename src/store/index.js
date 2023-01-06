@@ -57,11 +57,13 @@ export default new Vuex.Store({
       for (const doc of getPembayaranListrik) {
         if (!state.pembayaranListrik.some(dat => dat.id == doc.id)) {
           let getUsername = await getDocWithId('user', doc.id_user);
-          payload.push({ username: getUsername.name, ...doc });
+          payload.push({ username: getUsername.name, foto: getUsername.foto, ...doc });
         }
       }
       commit('setPembayaranListrik', payload);
       await dispatch('getTotalPembayaranListrik');
+      // console.log('length : ', state.pembayaranListrik.length);
+      // console.log('total : ', state.totalPembayaranListrik);
     },
     async getNextPembayaranListrik({ state, commit }) {
       var payload = [];
@@ -69,7 +71,7 @@ export default new Vuex.Store({
       for (const doc of getNextPembayaranListrik) {
         if (!state.pembayaranListrik.some(dat => dat.id == doc.id)) {
           let getUsername = await getDocWithId('user', doc.id_user);
-          payload.push({ username: getUsername.name, ...doc });
+          payload.push({ username: getUsername.name, foto: getUsername.foto, ...doc });
         }
       }
       commit('pushNextPembayaranListrik', payload);
@@ -77,7 +79,7 @@ export default new Vuex.Store({
     async addNewPembayaranListrik({ commit, dispatch, state }, payload) {
       const getUser = await getDocWithId('user', payload.data().id_user);
       if (!state.pembayaranListrik.some(doc => doc.id == payload.id)) {
-        const data = { id: payload.id, username: getUser.name, ...payload.data() };
+        const data = { id: payload.id, username: getUser.name, foto: getUser.foto, ...payload.data() };
         commit('unshiftPembayaranListrik', data);
         dispatch('getTotalPembayaranListrik');
       }

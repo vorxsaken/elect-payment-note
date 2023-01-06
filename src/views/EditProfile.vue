@@ -34,7 +34,7 @@ export default {
     data() {
         return {
             image: null,
-            nama: '',
+            nama: this.$store.state.username,
             isLoading: false,
             text: '',
             icon: '',
@@ -75,7 +75,13 @@ export default {
 
             if (this.image) {
                 await uploadAFile(this.image, 'foto').then((url) => {
-                    this.$store.state.profilePicture = url;
+                    updateData('user', localStorage.getItem('id'), {
+                        foto: url
+                    }).then(() => {
+                        this.$store.state.profilePicture = url;
+                    }).catch((err) => {
+                        console.log(err);
+                    })
                 }).catch((err) => {
                     console.log(err);
                     this.isLoading = false;

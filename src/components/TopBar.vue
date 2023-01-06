@@ -5,7 +5,11 @@
                 {{ this.$route.name }}
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-avatar v-if="this.$route.name != 'Profile User'" @click="toProfile" size="40" color="grey">
+            <v-avatar v-if="$route.name == 'Pembayaran Token Listrik' || (
+                $route.name == 'Detail Pembayaran' && (
+                    /\bfalse\b/.test($route.fullPath)
+                )
+            ) || $route.name == 'Tambah Pembayaran'" @click="toProfile" size="40" color="grey">
                 <v-img :src="this.$store.state.profilePicture"></v-img>
             </v-avatar>
         </v-app-bar>

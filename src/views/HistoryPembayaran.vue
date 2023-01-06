@@ -1,6 +1,6 @@
 <template>
-  <v-container class="fill-height">
-    <v-row v-if="history.length != 0" style="height: 89vh;" class="overflow-y-auto">
+  <v-container class="fill-height d-flex align-start">
+    <v-row v-if="history.length != 0" style="max-height: 89vh; height: auto;" class="overflow-y-auto">
       <v-col v-for="item in history" :key="item.id" cols="12" sm="12" md="6" lg="3" @click="detailPembayaran(item.id)">
         <PaymentListVue :tanggal="item.tanggal_pembayaran" :username="item.username" :src="item.foto_bukti_pembayaran" />
       </v-col>

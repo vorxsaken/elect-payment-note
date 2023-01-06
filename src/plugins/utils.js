@@ -1,5 +1,5 @@
-import { collection, doc, getDocs, getDoc, getFirestore, query, where, addDoc, setDoc, orderBy, limit, startAfter, onSnapshot, updateDoc } from 'firebase/firestore'
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { collection, doc, getDocs, getDoc, getFirestore, query, where, addDoc, setDoc, orderBy, limit, startAfter, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore'
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import app from '../plugins/firebase';
 import store from '../store/index';
 
@@ -78,6 +78,27 @@ const updateData = (collectionName, id, data) => {
         })
     })
 }
+// delete data from database
+const deleteDataNoConditional = async (collectionName, id) => {
+    return new Promise((resolve, reject) => {
+        deleteDoc(doc(db, collectionName, id)).then((data) => {
+            resolve(data)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// delete file in storage
+const deleteFile = (url) => {
+    return new Promise((resolve, reject) => {
+        deleteObject(ref(storage, url)).then((res) => {
+            resolve(res)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
 
 // upload file or blob
 const uploadAFile = (file, folder) => {
@@ -95,16 +116,22 @@ const uploadAFile = (file, folder) => {
 // others
 const getRealtimeUpdatePembayaran = (collectionName) => {
     const q = query(collection(db, collectionName), where('tanggal_pembayaran', '>', Date.now()));
+    const p = query(collection(db, collectionName));
     onSnapshot(q, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
             if (change.type === "modified") {
                 store.dispatch('addNewPembayaranListrik', change.doc)
             }
+        });
+    });
+
+    onSnapshot(p, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
             if (change.type === "removed") {
                 store.dispatch('removeSavedPembayaranListrik', change.doc)
             }
-        });
-    });
+        })
+    })
 }
 
 const getDatesFromMilisecond = (milisecond) => {
@@ -131,5 +158,7 @@ export {
     getDatesFromMilisecond,
     formatNumber,
     getRealtimeUpdatePembayaran,
-    updateData
+    updateData,
+    deleteDataNoConditional,
+    deleteFile
 };

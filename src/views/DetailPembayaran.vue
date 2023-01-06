@@ -2,13 +2,19 @@
   <div class="fill-height">
     <v-card elevation="0" class="mt-4" v-if="detailPembayaran">
       <v-card-text class="d-flex justify-center align-center flex-column">
-        <div @click="imageModal = true" style="width: auto; height: auto; border-radius: 10px; overflow: hidden;">
+        <div @click="showModal(detailPembayaran[0].foto_bukti_pembayaran)"
+          style="width: auto; height: auto; border-radius: 10px; overflow: hidden;">
           <v-img :src="detailPembayaran[0].foto_bukti_pembayaran" width="300" height="300">
           </v-img>
         </div>
-        <div class="mt-4 d-flex flex-column" style="width: 300px">
-          <span class="text-caption">Nama Pembayar</span>
-          <span class="font-weight-bold mt-n1">{{ detailPembayaran[0].username }}</span>
+        <div class="mt-4 d-flex flex-row" style="width: 300px">
+          <v-avatar size="40" @click="showModal(detailPembayaran[0].foto)">
+            <v-img :src="detailPembayaran[0].foto"></v-img>
+          </v-avatar>
+          <div class="d-flex flex-column ml-2">
+            <span class="text-caption">Nama Pembayar</span>
+            <span class="font-weight-bold mt-n1">{{ detailPembayaran[0].username }}</span>
+          </div>
         </div>
         <div class="mt-2 d-flex flex-column" style="width: 300px">
           <span class="text-caption">Jumlah Bayar</span>
@@ -19,8 +25,8 @@
           <span class="font-weight-bold mt-n1">{{ tanggal }}</span>
         </div>
       </v-card-text>
-      <v-card-actions v-if="id == detailPembayaran[0].id_user" class="d-flex justify-center">
-        <v-btn color="blue-grey darken-2" class="white--text">
+      <v-card-actions v-if="idUser == detailPembayaran[0].id_user" class="d-flex justify-center">
+        <v-btn :loading="isLoading" color="blue-grey darken-2" class="white--text" @click="deletePembayaran">
           <v-icon color="white">mdi-delete</v-icon>
           hapus
         </v-btn>
@@ -29,11 +35,11 @@
     <div v-else class="fill-height d-flex justify-center align-center pb-6" style="width: 100%">
       <img width="90" src="../assets/loading.gif" alt="">
     </div>
-    <div v-if="imageModal" @click.self="imageModal = false" class="containerModal">
+    <div v-if="imageModal" @click.self="imageModal = !imageModal" class="containerModal">
       <div class="imageContainer">
         <PinchScrollZoom width="350" height="400" :scale="1">
           <div style="width: 350px; height: 390px; overflow-y: auto" class="d-flex align-center">
-            <img class="imageForModal" :src="detailPembayaran[0].foto_bukti_pembayaran" alt="" />
+            <img class="imageForModal" :src="modalPhoto" alt="" />
           </div>
         </PinchScrollZoom>
       </div>
@@ -42,7 +48,7 @@
 </template>
 
 <script>
-import { getDatesFromMilisecond, formatNumber, getDocWithId } from '../plugins/utils'
+import { getDatesFromMilisecond, formatNumber, getDocWithId, deleteDataNoConditional, deleteFile } from '../plugins/utils'
 import PinchScrollZoom from '@coddicat/vue-pinch-scroll-zoom'
 
 export default {
@@ -51,9 +57,11 @@ export default {
   },
   data() {
     return {
-      id: localStorage.getItem('id'),
+      idUser: localStorage.getItem('id'),
       imageModal: false,
-      detailPembayaran: null
+      detailPembayaran: null,
+      modalPhoto: null,
+      isLoading: false
     }
   },
   computed: {
@@ -67,8 +75,8 @@ export default {
   methods: {
     async getDetail() {
       const getDetail = await getDocWithId('pembayaran_listrik', this.$route.params.id);
-      const getUser = await getDocWithId('user', this.id);
-      this.detailPembayaran = [{ username: getUser.name, ...getDetail }];
+      const getUser = await getDocWithId('user', this.idUser);
+      this.detailPembayaran = [{ username: getUser.name, foto: getUser.foto, ...getDetail }];
     },
     get() {
       if (!this.$route.params.directFromDatabase) {
@@ -80,6 +88,24 @@ export default {
 
       this.getDetail();
       return;
+    },
+    showModal(src) {
+      this.imageModal = true;
+      this.modalPhoto = src;
+    },
+    deletePembayaran() {
+      this.isLoading = true
+      deleteDataNoConditional('pembayaran_listrik', this.detailPembayaran[0].id).then(async () => {
+        deleteFile(this.detailPembayaran[0].foto_bukti_pembayaran).then(() => {
+          this.isLoading = false;
+          this.$router.back();
+        }).catch((err) => {
+          console.log(err);
+        });
+      }).catch((err) => {
+        this.isLoading = false
+        console.log(err);
+      })
     }
   },
   created() {

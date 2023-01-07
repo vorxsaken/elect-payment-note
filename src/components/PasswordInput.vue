@@ -19,16 +19,25 @@
 
 <script>
 export default {
-    props: ['placeholder'],
+    props: {
+        placeholder: String,
+        value: {
+            type: String,
+            default: ''
+        }
+    },
     data() {
         return {
-            text: '',
+            text: this.value,
             isPasswordVisible: false,
         }
     },
     watch: {
         text() {
             this.$emit('change', this.text);
+        },
+        value() {
+            this.text = this.value;
         }
     }
 

@@ -16,7 +16,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setUserInfo(state, payload) {
-      state.username = payload.name;
+      state.username = payload.nama;
       state.profilePicture = payload.foto;
       state.role = payload.role;
     },

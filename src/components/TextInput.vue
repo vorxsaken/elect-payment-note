@@ -32,6 +32,9 @@ export default {
     watch: {
         text() {
             this.$emit('change', this.text);
+        },
+        value() {
+            this.text = this.value
         }
     }
 }

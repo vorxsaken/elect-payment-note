@@ -19,9 +19,8 @@
 <script>
 import TextInputVue from '../components/TextInput.vue';
 import PasswordInputVue from '../components/PasswordInput.vue';
-import { getDocCon } from '../plugins/utils'
+import { getDocCon, key } from '../plugins/utils';
 import CryptoJS from 'crypto-js';
-import { key } from '../../Key';
 
 export default {
     components: {

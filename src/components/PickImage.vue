@@ -53,6 +53,11 @@ export default {
             this.$refs.inputFile.click();
             this.pickPictureChoice = false;
         }
+    },
+    watch: {
+        webSrc() {
+            this.fileImageSrc = this.webSrc;
+        }
     }
 }
 </script>

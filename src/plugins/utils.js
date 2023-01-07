@@ -147,7 +147,10 @@ const formatNumber = (number) => {
     return formated;
 }
 
+const key = 'pasd inasd imnhl';
+
 export {
+    key,
     getAll,
     getDocCon,
     getDocWithId,

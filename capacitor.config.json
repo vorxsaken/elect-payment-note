@@ -1,0 +1,6 @@
+{
+  "appId": "com.bayarListrik.app",
+  "appName": "Bayar Listrik",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

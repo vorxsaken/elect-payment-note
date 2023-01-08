@@ -27,7 +27,7 @@
                     <v-list-item-title class="font-weight-bold grey--text text--darken-2">History Pembayaran</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item link :to="{name: 'Tambah Anggota'}">
+            <v-list-item v-if="isSuperUser" link :to="{name: 'Tambah Anggota'}">
                 <v-list-item-icon>
                     <v-icon>mdi-account-multiple-plus</v-icon>
                 </v-list-item-icon>
@@ -50,10 +50,20 @@
 
 <script>
 export default {
+    data() {
+        return {
+            isSuperUser: false
+        }
+    },
     methods: {
         logout() {
             localStorage.clear();
             window.location.reload();
+        }
+    },
+    created() {
+        if(this.$store.state.role == 'super') {
+            this.isSuperUser = true;
         }
     }
 }

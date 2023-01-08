@@ -57,7 +57,7 @@ export default new Vuex.Store({
       for (const doc of getPembayaranListrik) {
         if (!state.pembayaranListrik.some(dat => dat.id == doc.id)) {
           let getUsername = await getDocWithId('user', doc.id_user);
-          payload.push({ username: getUsername.name, foto: getUsername.foto, ...doc });
+          payload.push({ username: getUsername.nama, foto: getUsername.foto, ...doc });
         }
       }
       commit('setPembayaranListrik', payload);
@@ -71,7 +71,7 @@ export default new Vuex.Store({
       for (const doc of getNextPembayaranListrik) {
         if (!state.pembayaranListrik.some(dat => dat.id == doc.id)) {
           let getUsername = await getDocWithId('user', doc.id_user);
-          payload.push({ username: getUsername.name, foto: getUsername.foto, ...doc });
+          payload.push({ username: getUsername.nama, foto: getUsername.foto, ...doc });
         }
       }
       commit('pushNextPembayaranListrik', payload);

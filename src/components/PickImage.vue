@@ -13,7 +13,7 @@
         <v-bottom-sheet v-model="pickPictureChoice">
             <v-card>
                 <v-card-actions class="pt-6 pl-6">
-                    <div class="d-flex justify-center align-center flex-column">
+                    <div @click="fromCamera" class="d-flex justify-center align-center flex-column">
                         <v-icon size="40" color="blue-grey darken-1">mdi-camera</v-icon>
                         <p class="text-caption font-weight-bold blue-grey--text text-darken-1">Kamera</p>
                     </div>
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
 export default {
     props: {
         deskripsi: String,
@@ -42,9 +44,32 @@ export default {
         }
     },
     methods: {
+        b64ToBlob(b64Data, contentType, sliceSize) {
+            contentType = contentType || '';
+            sliceSize = sliceSize || 512;
+
+            var byteCharacter = atob(b64Data);
+            var byteArrays = [];
+
+            for(var offset = 0; offset < byteCharacter.length; offset += sliceSize) {
+                var slice = byteCharacter.slice(offset, offset + sliceSize);
+
+                var byteNumbers = new Array(slice.length);
+                for(var i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                var byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+
+            var blob = new Blob(byteArrays, {type: contentType});
+            return blob;
+        },
         fileChange(e) {
             if (this.fileType.some(type => type == e.target.files[0].type)) {
                 this.fileImage = e.target.files[0];
+                console.log(this.fileImage);
                 this.fileImageSrc = URL.createObjectURL(this.fileImage);
                 this.$emit('getFileImage', this.fileImage);
             }
@@ -52,6 +77,27 @@ export default {
         pickFromGallery() {
             this.$refs.inputFile.click();
             this.pickPictureChoice = false;
+        },
+        async fromCamera() {
+            const image = await Camera.getPhoto({
+                quality: 90,
+                allowEditing: true,
+                source: CameraSource.Camera,
+                resultType: CameraResultType.DataUrl
+            });
+
+            const block = image.dataUrl.split(';');
+            // get content type
+            const contentType = block[0].split(':')[1];
+            // get base64 data example: /9j/4AAQSkZJRgAB....
+            const b64Data = block[1].split(',')[1];
+
+            // convert it to blob type
+            const blob = this.b64ToBlob(b64Data, contentType);
+            
+            this.fileImage = blob;
+            this.fileImageSrc = URL.createObjectURL(blob);
+            this.$emit('getFileImage', this.fileImage);
         }
     },
     watch: {

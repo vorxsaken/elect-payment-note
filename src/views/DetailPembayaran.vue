@@ -61,7 +61,7 @@ export default {
       imageModal: false,
       detailPembayaran: null,
       modalPhoto: null,
-      isLoading: false
+      isLoading: false,
     }
   },
   computed: {
@@ -76,7 +76,7 @@ export default {
     async getDetail() {
       const getDetail = await getDocWithId('pembayaran_listrik', this.$route.params.id);
       const getUser = await getDocWithId('user', this.idUser);
-      this.detailPembayaran = [{ username: getUser.name, foto: getUser.foto, ...getDetail }];
+      this.detailPembayaran = [{ username: getUser.nama, foto: getUser.foto, ...getDetail }];
     },
     get() {
       if (!this.$route.params.directFromDatabase) {

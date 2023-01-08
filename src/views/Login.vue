@@ -53,7 +53,7 @@ export default {
             }
 
             this.isLoading = true;
-            var username = await getDocCon('user', 'name', this.username);
+            var username = await getDocCon('user', 'nama', this.username);
             var encryptedPassword = username.length > 0 ? username[0].password : '';
 
             var bytes = CryptoJS.AES.decrypt(encryptedPassword, key);
